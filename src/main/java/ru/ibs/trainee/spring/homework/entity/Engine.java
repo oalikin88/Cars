@@ -1,18 +1,28 @@
 package ru.ibs.trainee.spring.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.springframework.stereotype.Component;
 import javax.persistence.*;
 
 @Entity
-@Table
+@Table (name = "Engines")
+@Component
 public class Engine {
     @Id
     @GeneratedValue
     private Long id;
     private String type;
+
     @OneToOne(mappedBy = "engine", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "car-engine")
     private Car car;
 
     public Engine() {
+    }
+
+    public Engine(Long id, String type) {
+        this.id = id;
+        this.type = type;
     }
 
     public Engine(Long id, String type, Car car) {

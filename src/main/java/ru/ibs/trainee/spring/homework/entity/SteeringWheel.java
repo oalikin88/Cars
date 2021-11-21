@@ -1,14 +1,10 @@
 package ru.ibs.trainee.spring.homework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 
 @Entity
-@Table
-
+@Table (name = "Steering_wheels")
 public class SteeringWheel {
     @Id
     @GeneratedValue
@@ -16,6 +12,7 @@ public class SteeringWheel {
     private String type;
 
     @OneToOne(mappedBy = "steeringWheel", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "car-steeringWheel")
     private Car car;
 
 

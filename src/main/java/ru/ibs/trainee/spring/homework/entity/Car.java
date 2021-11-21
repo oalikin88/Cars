@@ -1,11 +1,14 @@
 package ru.ibs.trainee.spring.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Cars")
@@ -16,13 +19,18 @@ public class Car {
     public Long id;
     public String mnfName;
     public String modelName;
-
+    @JsonBackReference(value = "car-steeringWheel")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "steering_wheel_id")
     private SteeringWheel steeringWheel;
+    @JsonBackReference(value = "car-engine")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "engine_id")
     private Engine engine;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "car_id")
+    @JsonBackReference(value = "car-gears")
+    private List<Gear> gears;
 
 
     public Car() {
@@ -48,6 +56,23 @@ public class Car {
         this.modelName = modelName;
         this.steeringWheel = steeringWheel;
         this.engine = engine;
+    }
+
+    public Car(Long id, String mnfName, String modelName, SteeringWheel steeringWheel, Engine engine, List<Gear> gears) {
+        this.id = id;
+        this.mnfName = mnfName;
+        this.modelName = modelName;
+        this.steeringWheel = steeringWheel;
+        this.engine = engine;
+        this.gears = gears;
+    }
+
+    public List<Gear> getGears() {
+        return gears;
+    }
+
+    public void setGears(List<Gear> gears) {
+        this.gears = gears;
     }
 
     public Long getId() {
@@ -90,14 +115,5 @@ public class Car {
         this.engine = engine;
     }
 
-    @Override
-    public String toString() {
-        return "\nCar{" +
-                "id=" + id +
-                ", mnfName='" + mnfName + '\'' +
-                ", modelName='" + modelName + '\'' +
-                ", steeringWheel=" + steeringWheel +
-                ", engine=" + engine +
-                '}';
-    }
+
 }
