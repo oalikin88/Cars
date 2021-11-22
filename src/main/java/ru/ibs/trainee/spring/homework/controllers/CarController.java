@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.ibs.trainee.spring.homework.entity.Car;
 import ru.ibs.trainee.spring.homework.exceptions.IdNotFoundException;
 import ru.ibs.trainee.spring.homework.repositories.CarRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 

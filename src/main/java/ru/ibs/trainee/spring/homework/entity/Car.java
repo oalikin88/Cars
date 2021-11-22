@@ -1,16 +1,12 @@
 package ru.ibs.trainee.spring.homework.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity (name = "Car")
 @Table(name = "Cars")
 @Component
 public class Car {
@@ -31,7 +27,17 @@ public class Car {
     @JoinColumn(name = "car_id")
     @JsonBackReference(value = "car-gears")
     private List<Gear> gears;
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JoinTable(
+            name = "cars_manuals",
+            joinColumns = @JoinColumn(name = "car_id"),
+            inverseJoinColumns = @JoinColumn(name = "manual_id"))
+    private List<Manual> manuals = new ArrayList<>();
 
+    public void addManual(Manual manual) {
+        manuals.add(manual);
+        manual.getCars().add(this);
+    }
 
     public Car() {
 
@@ -73,6 +79,23 @@ public class Car {
 
     public void setGears(List<Gear> gears) {
         this.gears = gears;
+    }
+
+
+
+    public void removeManual(Manual manual) {
+        manuals.remove(manual);
+        manual.getCars().remove(this);
+    }
+
+    public Car(Long id, String mnfName, String modelName, SteeringWheel steeringWheel, Engine engine, List<Gear> gears, List<Manual> manuals) {
+        this.id = id;
+        this.mnfName = mnfName;
+        this.modelName = modelName;
+        this.steeringWheel = steeringWheel;
+        this.engine = engine;
+        this.gears = gears;
+        this.manuals = manuals;
     }
 
     public Long getId() {

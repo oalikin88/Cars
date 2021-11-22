@@ -1,6 +1,5 @@
 package ru.ibs.trainee.spring.homework.entity;
 
-
 import javax.persistence.*;
 
 @Entity

@@ -1,23 +1,19 @@
 package ru.ibs.trainee.spring.homework;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import ru.ibs.trainee.spring.homework.entity.Car;
-import ru.ibs.trainee.spring.homework.entity.Engine;
-import ru.ibs.trainee.spring.homework.entity.Gear;
-import ru.ibs.trainee.spring.homework.entity.SteeringWheel;
+import ru.ibs.trainee.spring.homework.entity.*;
 import ru.ibs.trainee.spring.homework.repositories.CarRepository;
-import ru.ibs.trainee.spring.homework.repositories.EngineRepository;
-import ru.ibs.trainee.spring.homework.repositories.GearsRepository;
-import ru.ibs.trainee.spring.homework.repositories.SteeringWheelRepository;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +21,17 @@ import java.util.List;
 @SpringBootApplication
 @EnableJpaRepositories
 public class Main {
+    @Autowired
+    private Environment env;
 
 
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        driverManagerDataSource.setUsername("root");
-        driverManagerDataSource.setPassword("password");
-        driverManagerDataSource.setUrl("jdbc:mysql://localhost:3306/trainee");
+        driverManagerDataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+        driverManagerDataSource.setUsername(env.getProperty("spring.datasource.username"));
+        driverManagerDataSource.setPassword(env.getProperty("spring.datasource.password"));
+        driverManagerDataSource.setUrl(env.getProperty("spring.datasource.url"));
         return driverManagerDataSource;
     }
 
@@ -57,10 +55,14 @@ public class Main {
 
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(Main.class, args);
-
-
         CarRepository carRepository = context.getBean(CarRepository.class);
 
+        List<Gear> gears = new ArrayList<>();
+        List<Car> cars = new ArrayList<>();
+
+        Manual manual1 = new Manual("electric");
+        Manual manual2 = new Manual("engine");
+        Manual manual3 = new Manual("body");
 
         Car car1 = new Car(null, "Ford", "Fiesta");
         Car car2 = new Car(null, "Lada", "Priora");
@@ -72,8 +74,13 @@ public class Main {
                 new SteeringWheel(null, "leather"), new Engine(null, "petrol"));
         Car car7 = new Car(null, "Opel", "Astra",
                 new SteeringWheel(null, "eco"), new Engine(null, "diesel"));
+        Car car8 = new Car(null, "Lada", "Largus", new SteeringWheel(null, "eco")
+                , new Engine(null, "petrol"), gears);
+        Car car9 = new Car(null, "Lada", "Largus", new SteeringWheel(null, "eco")
+                , new Engine(null, "petrol"), gears);
+        Car car10 = new Car(null, "Lada", "Largus", new SteeringWheel(null, "eco")
+                , new Engine(null, "petrol"), gears);
 
-        List<Gear> gears = new ArrayList<>();
         Gear gear1 = new Gear(null, 5);
         Gear gear2 = new Gear(null, 6);
         Gear gear3 = new Gear(null, 7);
@@ -81,8 +88,14 @@ public class Main {
         gears.add(gear2);
         gears.add(gear3);
 
-        Car car8 = new Car(null, "Lada", "Largus", new SteeringWheel(null, "eco")
-        , new Engine(null, "petrol"), gears);
+
+        car8.addManual(manual1);
+        car9.addManual(manual2);
+        car10.addManual(manual3);
+        cars.add(car8);
+        cars.add(car9);
+        cars.add(car10);
+
         carRepository.save(car1);
         carRepository.save(car2);
         carRepository.save(car3);
@@ -90,7 +103,7 @@ public class Main {
         carRepository.save(car5);
         carRepository.save(car6);
         carRepository.save(car7);
-        carRepository.save(car8);
+        carRepository.saveAll(cars);
 
 
 

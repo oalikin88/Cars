@@ -5,11 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.ibs.trainee.spring.homework.entity.Car;
 import ru.ibs.trainee.spring.homework.entity.SteeringWheel;
 import ru.ibs.trainee.spring.homework.exceptions.IdNotFoundException;
 import ru.ibs.trainee.spring.homework.repositories.SteeringWheelRepository;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +17,6 @@ public class SteeringWheelController {
 
     @Autowired
     SteeringWheelRepository steeringWheelRepository;
-    @Autowired
-    Car car;
 
 
     @PostMapping("create")
