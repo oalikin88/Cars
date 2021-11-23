@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.ibs.trainee.spring.homework.entity.Engine;
 import ru.ibs.trainee.spring.homework.exceptions.IdNotFoundException;
 import ru.ibs.trainee.spring.homework.repositories.EngineRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +27,13 @@ public class EngineController {
     }
 
     @GetMapping("read/{id}")
-    public ResponseEntity engineReadById(@PathVariable String id) {
-        Long idEngine;
-        try {
-            idEngine = Long.parseLong(id);
-            if (engineRepository.findById(idEngine).isEmpty()) {
-                throw new IdNotFoundException();
-            }
-        } catch (Exception e) {
+    public ResponseEntity engineReadById(@PathVariable Long id) {
+        Engine engine;
+        if (!engineRepository.findById(id).isEmpty()) {
+            engine = engineRepository.findById(id).get();
+        } else {
             throw new IdNotFoundException();
         }
-
-        Engine engine = engineRepository.findById(idEngine).get();
         return new ResponseEntity(engine, HttpStatus.OK);
     }
 
@@ -50,46 +46,26 @@ public class EngineController {
 
     @PostMapping("update/{id}")
     @Transactional
-    public ResponseEntity engineUpdateById(@PathVariable String id, @RequestBody Engine engineUpdate) {
-        Long idEngine;
-        try {
-            idEngine = Long.parseLong(id);
-            if (engineRepository.findById(idEngine).isEmpty()) {
-                throw new IdNotFoundException();
-            }
-        } catch (Exception e) {
+    public ResponseEntity engineUpdateById(@PathVariable Long id, @RequestBody Engine engineUpdate) {
+        String type = engineUpdate.getType();
+        if (!engineRepository.findById(id).isEmpty()) {
+            engineRepository.editEngineById(type, id);
+        } else {
             throw new IdNotFoundException();
         }
-        String type = engineUpdate.getType();
-        engineRepository.editEngineById(type, idEngine);
         return new ResponseEntity("Engine was updated", HttpStatus.OK);
     }
 
-    @PostMapping("update")
-    public ResponseEntity engineUpdateError() {
-        return new ResponseEntity("id not found, please enter url \"engine/update/{id}\""
-                , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @PostMapping("delete/{id}")
-    public ResponseEntity engineDelete(@PathVariable String id) {
-        Long idEngine;
-        try {
-            idEngine = Long.parseLong(id);
-            if (engineRepository.findById(idEngine).isEmpty()) {
-                throw new IdNotFoundException();
-            }
-        } catch (Exception e) {
+    public ResponseEntity engineDelete(@PathVariable Long id) {
+        if (!engineRepository.findById(id).isEmpty()) {
+            engineRepository.deleteById(id);
+        } else {
             throw new IdNotFoundException();
         }
-        engineRepository.deleteById(idEngine);
         return new ResponseEntity("Engine was deleted", HttpStatus.OK);
     }
 
-    @PostMapping("delete")
-    public ResponseEntity engineDeleteError() {
-        return new ResponseEntity("id not found, please enter url \"engine/delete/{id}\""
-                , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
 }

@@ -25,17 +25,13 @@ public class GearController {
     }
 
     @GetMapping("read/{id}")
-    public ResponseEntity gearsReadById(@PathVariable String id) {
-        Long idGear;
-        try {
-            idGear = Long.parseLong(id);
-            if (gearsRepository.findById(idGear).isEmpty()) {
+    public ResponseEntity gearsReadById(@PathVariable Long id) {
+        Gear gear;
+            if (!gearsRepository.findById(id).isEmpty()) {
+                gear = gearsRepository.findById(id).get();
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-        Gear gear = gearsRepository.findById(idGear).get();
         return new ResponseEntity(gear, HttpStatus.OK);
     }
 
@@ -48,48 +44,26 @@ public class GearController {
 
     @PostMapping("update/{id}")
     @Transactional
-    public ResponseEntity gearsUpdateById(@PathVariable String id, @RequestBody Gear gearUpdate) {
-        Long idGear;
-        try {
-            idGear = Long.parseLong(id);
-            if (gearsRepository.findById(idGear).isEmpty()) {
+    public ResponseEntity gearsUpdateById(@PathVariable Long id, @RequestBody Gear gearUpdate) {
+        int size = gearUpdate.getSize();
+            if (!gearsRepository.findById(id).isEmpty()) {
+                gearsRepository.editGearById(size, id);
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-        int size = gearUpdate.getSize();
-        gearsRepository.editGearById(size, idGear);
         return new ResponseEntity("Gear was updated", HttpStatus.OK);
 
     }
 
-    @PostMapping("update")
-    public ResponseEntity gearsUpdateError() {
-        return new ResponseEntity("id not found, please enter url \"gear/update/{id}\""
-        , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @PostMapping("delete/{id}")
-    public ResponseEntity gearDelete(@PathVariable String id) {
-        Long idGear;
-        try {
-            idGear = Long.parseLong(id);
-            if (gearsRepository.findById(idGear).isEmpty()) {
+    public ResponseEntity gearDelete(@PathVariable Long id) {
+            if (!gearsRepository.findById(id).isEmpty()) {
+                gearsRepository.deleteById(id);
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-        gearsRepository.deleteById(idGear);
         return new ResponseEntity("Gear was deleted", HttpStatus.OK);
     }
-
-    @PostMapping("delete")
-    public ResponseEntity gearsDeleteError() {
-        return new ResponseEntity("id not found, please enter url \"gear/delete/{id}\"",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 
 }

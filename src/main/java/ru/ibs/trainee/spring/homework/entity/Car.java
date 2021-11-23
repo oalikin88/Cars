@@ -27,11 +27,14 @@ public class Car {
     @JoinColumn(name = "car_id")
     @JsonBackReference(value = "car-gears")
     private List<Gear> gears;
+
     @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     @JoinTable(
             name = "cars_manuals",
             joinColumns = @JoinColumn(name = "car_id"),
             inverseJoinColumns = @JoinColumn(name = "manual_id"))
+
+
     private List<Manual> manuals = new ArrayList<>();
 
     public void addManual(Manual manual) {
@@ -138,5 +141,11 @@ public class Car {
         this.engine = engine;
     }
 
-
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id = " + id +
+                ", mnfName = '" + mnfName + '\'' +
+                ", modelName = '" + modelName + '\'' + "}";
+    }
 }

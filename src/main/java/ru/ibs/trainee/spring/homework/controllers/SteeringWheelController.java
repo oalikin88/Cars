@@ -33,67 +33,37 @@ public class SteeringWheelController {
     }
 
     @GetMapping("read/{id}")
-    public ResponseEntity stWheelReadById(@PathVariable String id) {
-        Long idStWheel;
-        try {
-            idStWheel = Long.parseLong(id);
-            if (steeringWheelRepository.findById(idStWheel).isEmpty()) {
+    public ResponseEntity stWheelReadById(@PathVariable Long id) {
+        SteeringWheel steeringWheel;
+            if (!steeringWheelRepository.findById(id).isEmpty()) {
+                steeringWheel = steeringWheelRepository.findById(id).get();
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-
-        SteeringWheel steeringWheel = steeringWheelRepository.findById(idStWheel).get();
         return new ResponseEntity(steeringWheel, HttpStatus.OK);
     }
 
     @PostMapping("update/{id}")
     @Transactional
-    public ResponseEntity stWheelUpdate(@PathVariable String id, @RequestBody SteeringWheel stWheel) {
-
-        Long idStWheel;
-        String type;
-        try {
-            idStWheel = Long.parseLong(id);
-            if(steeringWheelRepository.findById(idStWheel).isEmpty()){
+    public ResponseEntity stWheelUpdate(@PathVariable Long id, @RequestBody SteeringWheel stWheel) {
+        String type = stWheel.getType();
+            if(!steeringWheelRepository.findById(id).isEmpty()){
+                steeringWheelRepository.editStWheelInfoById(type, id);
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-        type = stWheel.getType();
-        steeringWheelRepository.editStWheelInfoById(type, idStWheel);
         return new ResponseEntity("Steering wheel was updated", HttpStatus.OK);
     }
 
-    @PostMapping("update")
-    public ResponseEntity stWheelUpdateError() {
-        return new ResponseEntity("id not found, please enter url \"stwheel/update/{id}\" "
-                , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
     @PostMapping("delete/{id}")
-    public ResponseEntity stWheelDel(@PathVariable String id) {
-        Long idStWheel;
-        try {
-            idStWheel = Long.parseLong(id);
-            if(steeringWheelRepository.findById(idStWheel).isEmpty()){
+    public ResponseEntity stWheelDel(@PathVariable Long id) {
+            if(!steeringWheelRepository.findById(id).isEmpty()){
+                steeringWheelRepository.deleteById(id);
+            } else {
                 throw new IdNotFoundException();
             }
-        } catch (Exception e) {
-            throw new IdNotFoundException();
-        }
-        steeringWheelRepository.deleteById(idStWheel);
-
         return new ResponseEntity("Steering wheel was deleted", HttpStatus.OK);
     }
-
-    @PostMapping("delete")
-    public ResponseEntity stWheelDelError() {
-        return new ResponseEntity("id not found, please enter url \"stwheel/delete/{id}\""
-                , HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 
 }

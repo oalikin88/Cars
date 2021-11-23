@@ -12,7 +12,7 @@ public class Manual {
     private Long id;
     private String type;
 
-    @ManyToMany(mappedBy = "manuals")
+    @ManyToMany(mappedBy = "manuals", cascade = CascadeType.ALL)
     private List<Car> cars = new ArrayList<>();
 
     public Manual() {
@@ -45,4 +45,5 @@ public class Manual {
     public void setCars(List<Car> cars) {
         this.cars = cars;
     }
+
 }
